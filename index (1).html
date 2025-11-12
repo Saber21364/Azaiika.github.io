@@ -1,0 +1,487 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SSJ3 BOT-Z - Tournoi Légendaire</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Arial', sans-serif;
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+            color: white;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 40px;
+            padding: 20px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 15px;
+            border: 2px solid #ffd700;
+        }
+
+        .title {
+            font-size: 3em;
+            color: #ffd700;
+            text-shadow: 0 0 10px rgba(255, 215, 0, 0.5);
+            margin-bottom: 10px;
+            font-weight: bold;
+        }
+
+        .subtitle {
+            font-size: 1.2em;
+            color: #ff6b6b;
+            margin-bottom: 20px;
+        }
+
+        .rules {
+            background: rgba(0, 0, 0, 0.3);
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 30px;
+            border-left: 4px solid #ff6b6b;
+        }
+
+        .rules h2 {
+            color: #ffd700;
+            margin-bottom: 15px;
+        }
+
+        .rules ul {
+            list-style: none;
+            padding-left: 20px;
+        }
+
+        .rules li {
+            margin-bottom: 10px;
+            padding-left: 25px;
+            position: relative;
+        }
+
+        .rules li:before {
+            content: "⚡";
+            position: absolute;
+            left: 0;
+            color: #ffd700;
+        }
+
+        .main-content {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+            margin-bottom: 40px;
+        }
+
+        @media (max-width: 768px) {
+            .main-content {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .card {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 25px;
+            border-radius: 15px;
+            border: 1px solid rgba(255, 215, 0, 0.3);
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            color: #ffd700;
+            font-weight: bold;
+        }
+
+        input, select {
+            width: 100%;
+            padding: 12px;
+            border: none;
+            border-radius: 8px;
+            background: rgba(255, 255, 255, 0.9);
+            font-size: 16px;
+        }
+
+        button {
+            background: linear-gradient(45deg, #ff6b6b, #ffd700);
+            color: #1a1a2e;
+            border: none;
+            padding: 15px 30px;
+            border-radius: 8px;
+            font-size: 18px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: transform 0.3s ease;
+            width: 100%;
+        }
+
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(255, 215, 0, 0.4);
+        }
+
+        .participants-list {
+            max-height: 400px;
+            overflow-y: auto;
+        }
+
+        .participant {
+            background: rgba(255, 255, 255, 0.05);
+            padding: 15px;
+            margin-bottom: 10px;
+            border-radius: 8px;
+            border-left: 4px solid #ffd700;
+        }
+
+        .participant-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 8px;
+        }
+
+        .participant-name {
+            font-weight: bold;
+            color: #ffd700;
+        }
+
+        .participant-stats {
+            font-size: 0.9em;
+            color: #ccc;
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 20px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+            overflow: hidden;
+            margin-top: 10px;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #ff6b6b, #ffd700);
+            border-radius: 10px;
+            transition: width 0.5s ease;
+        }
+
+        .leaderboard {
+            margin-top: 40px;
+        }
+
+        .leaderboard-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px;
+            background: rgba(255, 255, 255, 0.05);
+            margin-bottom: 10px;
+            border-radius: 8px;
+            border-left: 4px solid;
+        }
+
+        .rank-1 { border-left-color: #ffd700; background: rgba(255, 215, 0, 0.1); }
+        .rank-2 { border-left-color: #c0c0c0; background: rgba(192, 192, 192, 0.1); }
+        .rank-3 { border-left-color: #cd7f32; background: rgba(205, 127, 50, 0.1); }
+
+        .rank {
+            font-weight: bold;
+            font-size: 1.2em;
+            color: #ffd700;
+        }
+
+        .notification {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            padding: 15px 20px;
+            background: #4CAF50;
+            color: white;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+            transform: translateX(400px);
+            transition: transform 0.3s ease;
+            z-index: 1000;
+        }
+
+        .notification.show {
+            transform: translateX(0);
+        }
+
+        .dragon-ball {
+            position: absolute;
+            width: 50px;
+            height: 50px;
+            background: radial-gradient(circle at 30% 30%, #ff6b6b, #ff0000);
+            border-radius: 50%;
+            border: 2px solid #ffd700;
+            animation: float 3s ease-in-out infinite;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-10px); }
+        }
+    </style>
+</head>
+<body>
+    <div class="dragon-ball" style="top: 10%; left: 5%;"></div>
+    <div class="dragon-ball" style="top: 20%; right: 10%; animation-delay: 0.5s;"></div>
+    <div class="dragon-ball" style="bottom: 15%; left: 15%; animation-delay: 1s;"></div>
+
+    <div class="container">
+        <div class="header">
+            <h1 class="title">SSJ3 BOT-Z TOURNOI</h1>
+            <p class="subtitle">Affrontez les meilleurs guerriers et remportez 50K Zenis !</p>
+        </div>
+
+        <div class="rules">
+            <h2>⚡ Règles du Tournoi</h2>
+            <ul>
+                <li>Inscrivez-vous avec votre pseudo Discord</li>
+                <li>3 victoires dans un match = 1 POINT</li>
+                <li>Le premier à atteindre 3 victoires remporte le match</li>
+                <li>100 POINTS = 50,000 ZENIS de récompense !</li>
+                <li>Respect et fair-play obligatoires</li>
+            </ul>
+        </div>
+
+        <div class="main-content">
+            <div class="card">
+                <h2 style="color: #ffd700; margin-bottom: 20px;">🎯 Inscription au Tournoi</h2>
+                <form id="registrationForm">
+                    <div class="form-group">
+                        <label for="discordName">Pseudo Discord *</label>
+                        <input type="text" id="discordName" required placeholder="Ex: SonGoku#1234">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="character">Personnage Principal</label>
+                        <select id="character">
+                            <option value="goku">Son Goku</option>
+                            <option value="vegeta">Vegeta</option>
+                            <option value="gohan">Son Gohan</option>
+                            <option value="frieza">Freezer</option>
+                            <option value="cell">Cell</option>
+                            <option value="buu">Boo</option>
+                            <option value="broly">Broly</option>
+                            <option value="other">Autre</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="level">Niveau Estimé</label>
+                        <select id="level">
+                            <option value="beginner">Débutant</option>
+                            <option value="intermediate">Intermédiaire</option>
+                            <option value="advanced">Avancé</option>
+                            <option value="pro">Pro</option>
+                        </select>
+                    </div>
+
+                    <button type="submit">🚀 S'INSCRIRE AU TOURNOI</button>
+                </form>
+            </div>
+
+            <div class="card">
+                <h2 style="color: #ffd700; margin-bottom: 20px;">🏆 Participants</h2>
+                <div class="participants-list" id="participantsList">
+                    <!-- Les participants seront ajoutés ici dynamiquement -->
+                </div>
+            </div>
+        </div>
+
+        <div class="card leaderboard">
+            <h2 style="color: #ffd700; margin-bottom: 20px;">📊 Classement en Temps Réel</h2>
+            <div id="leaderboard">
+                <!-- Le classement sera généré ici -->
+            </div>
+        </div>
+    </div>
+
+    <div class="notification" id="notification">
+        Inscription réussie ! Bienvenue dans le tournoi !
+    </div>
+
+    <script>
+        // Stockage des participants
+        let participants = JSON.parse(localStorage.getItem('tournamentParticipants')) || [];
+
+        // Éléments DOM
+        const registrationForm = document.getElementById('registrationForm');
+        const participantsList = document.getElementById('participantsList');
+        const leaderboard = document.getElementById('leaderboard');
+        const notification = document.getElementById('notification');
+
+        // Fonction pour afficher les notifications
+        function showNotification(message) {
+            notification.textContent = message;
+            notification.classList.add('show');
+            setTimeout(() => {
+                notification.classList.remove('show');
+            }, 3000);
+        }
+
+        // Fonction pour afficher les participants
+        function displayParticipants() {
+            participantsList.innerHTML = '';
+            participants.forEach((participant, index) => {
+                const progressPercentage = (participant.points / 100) * 100;
+                
+                const participantElement = document.createElement('div');
+                participantElement.className = 'participant';
+                participantElement.innerHTML = `
+                    <div class="participant-header">
+                        <span class="participant-name">${participant.name}</span>
+                        <span class="participant-stats">${participant.points} POINTS</span>
+                    </div>
+                    <div>Personnage: ${getCharacterName(participant.character)}</div>
+                    <div>Niveau: ${getLevelName(participant.level)}</div>
+                    <div class="progress-bar">
+                        <div class="progress-fill" style="width: ${progressPercentage}%"></div>
+                    </div>
+                    <small>${100 - participant.points} points restants pour 50K Zenis</small>
+                `;
+                participantsList.appendChild(participantElement);
+            });
+        }
+
+        // Fonction pour mettre à jour le classement
+        function updateLeaderboard() {
+            leaderboard.innerHTML = '';
+            
+            // Trier par points (décroissant)
+            const sortedParticipants = [...participants].sort((a, b) => b.points - a.points);
+            
+            sortedParticipants.forEach((participant, index) => {
+                const rankClass = index < 3 ? `rank-${index + 1}` : '';
+                const rankElement = document.createElement('div');
+                rankElement.className = `leaderboard-item ${rankClass}`;
+                rankElement.innerHTML = `
+                    <div>
+                        <span class="rank">#${index + 1}</span>
+                        <strong>${participant.name}</strong>
+                    </div>
+                    <div>
+                        <strong>${participant.points} POINTS</strong>
+                        <div style="font-size: 0.8em; color: #ccc;">${getCharacterName(participant.character)}</div>
+                    </div>
+                `;
+                leaderboard.appendChild(rankElement);
+            });
+        }
+
+        // Helper functions
+        function getCharacterName(character) {
+            const characters = {
+                'goku': 'Son Goku',
+                'vegeta': 'Vegeta',
+                'gohan': 'Son Gohan',
+                'frieza': 'Freezer',
+                'cell': 'Cell',
+                'buu': 'Boo',
+                'broly': 'Broly',
+                'other': 'Autre'
+            };
+            return characters[character] || 'Inconnu';
+        }
+
+        function getLevelName(level) {
+            const levels = {
+                'beginner': 'Débutant',
+                'intermediate': 'Intermédiaire',
+                'advanced': 'Avancé',
+                'pro': 'Professionnel'
+            };
+            return levels[level] || 'Inconnu';
+        }
+
+        // Gestion de l'inscription
+        registrationForm.addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const discordName = document.getElementById('discordName').value.trim();
+            const character = document.getElementById('character').value;
+            const level = document.getElementById('level').value;
+
+            // Vérifier si le participant existe déjà
+            const existingParticipant = participants.find(p => p.name === discordName);
+            if (existingParticipant) {
+                showNotification('Vous êtes déjà inscrit au tournoi !');
+                return;
+            }
+
+            // Ajouter le nouveau participant
+            const newParticipant = {
+                name: discordName,
+                character: character,
+                level: level,
+                points: 0,
+                wins: 0,
+                matches: 0,
+                registrationDate: new Date().toISOString()
+            };
+
+            participants.push(newParticipant);
+            localStorage.setItem('tournamentParticipants', JSON.stringify(participants));
+            
+            showNotification(`Bienvenue ${discordName} ! Vous êtes inscrit au tournoi.`);
+            registrationForm.reset();
+            
+            displayParticipants();
+            updateLeaderboard();
+        });
+
+        // Fonctions pour la gestion des matchs (pour admin)
+        function addWin(playerName) {
+            const participant = participants.find(p => p.name === playerName);
+            if (participant) {
+                participant.wins++;
+                if (participant.wins % 3 === 0) {
+                    participant.points++;
+                    showNotification(`🎉 ${playerName} gagne 1 POINT ! (${participant.points}/100)`);
+                    
+                    // Vérifier si le joueur atteint 100 points
+                    if (participant.points >= 100) {
+                        showNotification(`🏆 FÉLICITATIONS ${playerName} ! Vous avez gagné 50,000 ZENIS !`);
+                        // Réinitialiser pour un nouveau cycle
+                        participant.points = 0;
+                        participant.wins = 0;
+                    }
+                }
+                
+                localStorage.setItem('tournamentParticipants', JSON.stringify(participants));
+                displayParticipants();
+                updateLeaderboard();
+            }
+        }
+
+        // Initialisation
+        displayParticipants();
+        updateLeaderboard();
+
+        // Exemple d'ajout de victoire (à utiliser depuis la console)
+        window.addWin = addWin;
+
+        console.log('🚀 SSJ3 BOT-Z Tournoi chargé !');
+        console.log('Pour ajouter une victoire à un joueur, utilisez: addWin("PseudoDiscord")');
+    </script>
+</body>
+</html>
